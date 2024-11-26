@@ -99,14 +99,15 @@ public class EventProcessorService {
         if (atomicLatch.get() == 0) {
             return;
         }
-
+        
+        lock.lock();
         try {
-            lock.lock();
             collectProcessedEvents();
             saveProcessedEvents();
-            lock.unlock();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
         }
     }
 
